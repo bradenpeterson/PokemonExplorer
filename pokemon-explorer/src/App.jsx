@@ -31,6 +31,17 @@ function App() {
   return (
     <>
       <h1>Pokémon Explorer</h1>
+
+      <SearchBar />
+      {isLoading && <LoadingSpinner />}
+      {error && <ErrorMessage />}
+
+      <div className="card-grid">
+        {filteredPokemonList.map((pokemon) => (
+          <Card key={pokemon.id} pokemon={pokemon} />
+        ))}
+      </div>
+      
     </>
   )
 }
