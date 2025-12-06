@@ -1,7 +1,7 @@
 # AtomicJoltCodingChallenge
 
 ## Description
-This is my solution for the Atomic Jolt Internship Coding Challenge. I chose option A and focused on the frontend. 
+A Pokemon exploration app for the Atomic Jolt Internship Coding Challenge. I chose option A and focused on the frontend. 
 
 Users can search, browse, and view detailed information about Pokemon in a clean, image-rich interface. 
 
