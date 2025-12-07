@@ -65,10 +65,13 @@ function App() {
   }
 
   return (
-    <>
-      <h1>Pokémon Explorer</h1>
+    <div className="app">
+      <div className="app-header">
+        <img src="/pokemon-logo.png" alt="Pokémon Explorer" className="header-logo" />
+      </div>
 
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} filterType={filterType} setFilterType={setFilterType} />
+      
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage />}
 
@@ -78,7 +81,7 @@ function App() {
         ))}
       </div>
       
-    </>
+    </div>
   )
 }
 
