@@ -44,8 +44,24 @@ function App() {
     setFilteredPokemonList(filtered)
   }, [searchTerm, filterType, pokemonList])
 
+  function handleRetry() {
+    setError(null)
+    setIsLoading(true)
+    fetchPokemonList()
+      .then(async (list) => {
+        const detailedList = await fetchBatchDetails(list)
+        setPokemonList(detailedList)
+        setFilteredPokemonList(detailedList)
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        setError('Failed to fetch Pokémon data.')
+        setIsLoading(false)
+      })
+  }
+
   if (error) {
-    return <ErrorMessage />
+    return <ErrorMessage message={error} onRetry={handleRetry} />
   }
 
   return (
