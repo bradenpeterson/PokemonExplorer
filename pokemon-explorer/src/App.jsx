@@ -76,7 +76,27 @@ function App() {
     }
 
     setFilteredPokemonList(filtered)
-  }, [searchTerm, filterType, pokemonList])
+    
+    // Auto-load more while actively filtering/searching and not at the end
+    const isSearching = searchTerm.trim() !== '' || filterType !== 'all'
+    if (isSearching && hasMorePokemon && !loadingMore) {
+      // Only load if we haven't loaded all Pokemon yet
+      // This ensures we search through ALL available Pokemon
+      setLoadingMore(true)
+      fetchPokemonList(50, offset)
+        .then(async (list) => {
+          if (list.length === 0) {
+            setHasMorePokemon(false)
+          } else {
+            const detailedList = await fetchBatchDetails(list)
+            setPokemonList(prev => [...prev, ...detailedList])
+            setOffset(offset + 50)
+          }
+          setLoadingMore(false)
+        })
+        .catch(() => setLoadingMore(false))
+    }
+  }, [searchTerm, filterType, pokemonList, hasMorePokemon, loadingMore, offset])
 
   function handleRetry() {
     setError(null)
@@ -117,8 +137,7 @@ function App() {
         ))}
       </div>
 
-      {loadingMore && <LoadingSpinner />}
-      {!hasMorePokemon && <p className="end-message">No more Pokémon to load.</p>}
+      {loadingMore && filteredPokemonList.length > 0 && <LoadingSpinner />}
       
     </div>
   )
