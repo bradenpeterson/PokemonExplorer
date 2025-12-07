@@ -12,15 +12,19 @@ function App() {
   const [filterType, setFilterType] = useState('all')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [offset, setOffset] = useState(0)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMorePokemon, setHasMorePokemon] = useState(true)
 
   // Fetch Pokémon data on component mount
   useEffect(() => {
     setIsLoading(true)
-    fetchPokemonList()
+    fetchPokemonList(100, 0)
       .then(async (list) => {
         const detailedList = await fetchBatchDetails(list)
         setPokemonList(detailedList)
         setFilteredPokemonList(detailedList)
+        setOffset(100)
         setIsLoading(false)
       })
       .catch((err) => {
@@ -28,6 +32,36 @@ function App() {
         setIsLoading(false)
       })
   }, [])
+
+  // Infinite scroll to load more Pokémon
+  useEffect(() => {
+    function handleScroll() {
+      if (loadingMore || !hasMorePokemon) return
+
+      if (window.innerHeight + document.documentElement.scrollTop + 100 >= document.documentElement.offsetHeight) {
+        setLoadingMore(true)
+        fetchPokemonList(100, offset)
+          .then(async (list) => {
+            if (list.length === 0) {
+              setHasMorePokemon(false)
+              setLoadingMore(false)
+              return
+            }
+            const detailedList = await fetchBatchDetails(list)
+            setPokemonList((prevList) => [...prevList, ...detailedList])
+            setOffset((prevOffset) => prevOffset + 100)
+            setLoadingMore(false)
+          })
+          .catch((err) => {
+            setError('Failed to load more Pokémon.')
+            setLoadingMore(false)
+          })
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [loadingMore, hasMorePokemon, offset])
 
   // Filter Pokémon based on search term and type
   useEffect(() => {
@@ -82,6 +116,9 @@ function App() {
           <Card key={pokemon.id} pokemon={pokemon} />
         ))}
       </div>
+
+      {loadingMore && <LoadingSpinner />}
+      {!hasMorePokemon && <p className="end-message">No more Pokémon to load.</p>}
       
     </div>
   )

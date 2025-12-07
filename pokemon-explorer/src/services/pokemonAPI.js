@@ -1,5 +1,5 @@
 // Gets a list of Pokémon with basic info
-// Limit and offset can be adjusted for pagination, base of 151 for original Pokémon
+// Limit and offset can be adjusted for pagination
 async function fetchPokemonList(limit = 151, offset = 0) {
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);

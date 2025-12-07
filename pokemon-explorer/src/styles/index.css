@@ -145,6 +145,16 @@ body {
   font-size: 0.95rem;
 }
 
+.end-message {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1.2rem;
+  color: var(--poke-blue);
+  font-weight: 600;
+  margin-top: 20px;
+  letter-spacing: 0.3px;
+}
+
 /* Spinner (Pokéball-ish) */
 .loading-spinner {
   display: flex;

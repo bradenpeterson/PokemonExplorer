@@ -10,7 +10,7 @@ export function Card({ pokemon }) {
                 height="120" 
             />
             <p>ID: {pokemon.id}</p>
-            <p>Type: {pokemon.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
+            <p>Type: {pokemon.types.map(typeInfo => typeInfo.type.name.charAt(0).toUpperCase() + typeInfo.type.name.slice(1)).join(', ')}</p>
             <p>Height: {pokemon.height / 10} m</p>
             <p>Weight: {pokemon.weight / 10} kg</p>
         </div>
