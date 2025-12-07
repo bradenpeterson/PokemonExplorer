@@ -3,7 +3,7 @@ import { SearchBar } from './components/SearchBar.jsx'
 import { LoadingSpinner } from './components/LoadingSpinner.jsx'
 import { Card } from './components/Card.jsx'
 import { ErrorMessage } from './components/ErrorMessage.jsx'
-import { fetchPokemonList, fetchPokemonDetails, fetchBatchDetails } from './services/pokemonApi.js'
+import { fetchPokemonList, fetchBatchDetails } from './services/pokemonAPI.js'
 
 function App() {
   const [pokemonList, setPokemonList] = useState([])
@@ -101,11 +101,14 @@ function App() {
   function handleRetry() {
     setError(null)
     setIsLoading(true)
-    fetchPokemonList()
+    setOffset(0)
+    setHasMorePokemon(true)
+    fetchPokemonList(100, 0)
       .then(async (list) => {
         const detailedList = await fetchBatchDetails(list)
         setPokemonList(detailedList)
         setFilteredPokemonList(detailedList)
+        setOffset(100)
         setIsLoading(false)
       })
       .catch((err) => {
