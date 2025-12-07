@@ -28,7 +28,7 @@ async function fetchBatchDetails(pokemonList) {
     try {
         const detailsPromises = pokemonList.map(pokemon => fetchPokemonDetails(pokemon.name));
         const detailedPokemonList = await Promise.all(detailsPromises);
-        return detailedPokemonList;
+        return detailedPokemonList.filter(Boolean);
     } catch (error) {
         console.error("Failed to fetch batch Pokémon details:", error);
         return [];

@@ -194,6 +194,29 @@ body {
   font-weight: 600;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 28px 18px;
+  color: var(--muted);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  border: 2px dashed #e5e7eb;
+  max-width: 540px;
+  margin: 20px auto;
+}
+
+.empty-state h3 {
+  margin: 0 0 6px;
+  color: var(--poke-blue);
+  letter-spacing: 0.3px;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--muted);
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Error */
