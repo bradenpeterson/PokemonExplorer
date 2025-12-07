@@ -70,8 +70,10 @@ function App() {
         <img src="/pokemon-logo.png" alt="Pokémon Explorer" className="header-logo" />
       </div>
 
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} filterType={filterType} setFilterType={setFilterType} />
-      
+      <div className="search-bar-container">
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} filterType={filterType} setFilterType={setFilterType} />
+      </div>
+
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage />}
 
