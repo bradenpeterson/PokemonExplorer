@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { SearchBar } from './components/SearchBar.jsx'
 import { LoadingSpinner } from './components/LoadingSpinner.jsx'
 import { Card } from './components/Card.jsx'
@@ -6,6 +6,7 @@ import { ErrorMessage } from './components/ErrorMessage.jsx'
 import { fetchPokemonList, fetchBatchDetails } from './services/pokemonAPI.js'
 
 function App() {
+  const PAGE_SIZE = 50
   const [pokemonList, setPokemonList] = useState([])
   const [filteredPokemonList, setFilteredPokemonList] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -15,16 +16,20 @@ function App() {
   const [offset, setOffset] = useState(0)
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMorePokemon, setHasMorePokemon] = useState(true)
+  const initialFetchRef = useRef(false)
 
   // Fetch Pokémon data on component mount
   useEffect(() => {
+    if (initialFetchRef.current) return
+    initialFetchRef.current = true
+
     setIsLoading(true)
-    fetchPokemonList(100, 0)
+    fetchPokemonList(PAGE_SIZE, 0)
       .then(async (list) => {
         const detailedList = await fetchBatchDetails(list)
         setPokemonList(detailedList)
         setFilteredPokemonList(detailedList)
-        setOffset(100)
+        setOffset(PAGE_SIZE)
         setIsLoading(false)
       })
       .catch((err) => {
@@ -40,7 +45,7 @@ function App() {
 
       if (window.innerHeight + document.documentElement.scrollTop + 100 >= document.documentElement.offsetHeight) {
         setLoadingMore(true)
-        fetchPokemonList(100, offset)
+        fetchPokemonList(PAGE_SIZE, offset)
           .then(async (list) => {
             if (list.length === 0) {
               setHasMorePokemon(false)
@@ -49,7 +54,7 @@ function App() {
             }
             const detailedList = await fetchBatchDetails(list)
             setPokemonList((prevList) => [...prevList, ...detailedList])
-            setOffset((prevOffset) => prevOffset + 100)
+            setOffset((prevOffset) => prevOffset + PAGE_SIZE)
             setLoadingMore(false)
           })
           .catch((err) => {
@@ -83,14 +88,14 @@ function App() {
       // Only load if we haven't loaded all Pokemon yet
       // This ensures we search through ALL available Pokemon
       setLoadingMore(true)
-      fetchPokemonList(50, offset)
+      fetchPokemonList(PAGE_SIZE, offset)
         .then(async (list) => {
           if (list.length === 0) {
             setHasMorePokemon(false)
           } else {
             const detailedList = await fetchBatchDetails(list)
             setPokemonList(prev => [...prev, ...detailedList])
-            setOffset(offset + 50)
+            setOffset(offset + PAGE_SIZE)
           }
           setLoadingMore(false)
         })
@@ -103,12 +108,12 @@ function App() {
     setIsLoading(true)
     setOffset(0)
     setHasMorePokemon(true)
-    fetchPokemonList(100, 0)
+    fetchPokemonList(PAGE_SIZE, 0)
       .then(async (list) => {
         const detailedList = await fetchBatchDetails(list)
         setPokemonList(detailedList)
         setFilteredPokemonList(detailedList)
-        setOffset(100)
+        setOffset(PAGE_SIZE)
         setIsLoading(false)
       })
       .catch((err) => {
@@ -132,7 +137,13 @@ function App() {
       </div>
 
       {isLoading && <LoadingSpinner />}
-      {error && <ErrorMessage />}
+
+      {!isLoading && !loadingMore && filteredPokemonList.length === 0 && (
+        <div className="empty-state">
+          <h3>No Pokémon found</h3>
+          <p>Try a different name or adjust the type filter.</p>
+        </div>
+      )}
 
       <div className="card-grid">
         {filteredPokemonList.map((pokemon) => (
