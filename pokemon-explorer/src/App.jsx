@@ -13,6 +13,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
+  // Fetch Pokémon data on component mount
   useEffect(() => {
     setIsLoading(true)
     fetchPokemonList()
@@ -28,11 +29,30 @@ function App() {
       })
   }, [])
 
+  // Filter Pokémon based on search term and type
+  useEffect(() => {
+    let filtered = pokemonList.filter(pokemon =>
+      pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    if (filterType !== 'all') {
+      filtered = filtered.filter(pokemon =>
+        pokemon.types.some(typeInfo => typeInfo.type.name === filterType)
+      )
+    }
+
+    setFilteredPokemonList(filtered)
+  }, [searchTerm, filterType, pokemonList])
+
+  if (error) {
+    return <ErrorMessage />
+  }
+
   return (
     <>
       <h1>Pokémon Explorer</h1>
 
-      <SearchBar />
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} filterType={filterType} setFilterType={setFilterType} />
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage />}
 
